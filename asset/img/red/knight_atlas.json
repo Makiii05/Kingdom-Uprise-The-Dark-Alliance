@@ -1,0 +1,63 @@
+{
+    "frames": [
+        {"filename":"idle_0","frame":{"w":192,"h":192,"x":0,"y":0},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"idle_1","frame":{"w":192,"h":192,"x":192,"y":0},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"idle_2","frame":{"w":192,"h":192,"x":384,"y":0},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"idle_3","frame":{"w":192,"h":192,"x":576,"y":0},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"idle_4","frame":{"w":192,"h":192,"x":768,"y":0},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"idle_5","frame":{"w":192,"h":192,"x":960,"y":0},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"walk_0","frame":{"w":192,"h":192,"x":0,"y":192},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"walk_1","frame":{"w":192,"h":192,"x":192,"y":192},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"walk_2","frame":{"w":192,"h":192,"x":384,"y":192},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"walk_3","frame":{"w":192,"h":192,"x":576,"y":192},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"walk_4","frame":{"w":192,"h":192,"x":768,"y":192},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"walk_5","frame":{"w":192,"h":192,"x":960,"y":192},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackright1_0","frame":{"w":192,"h":192,"x":0,"y":384},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright1_1","frame":{"w":192,"h":192,"x":192,"y":384},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright1_2","frame":{"w":192,"h":192,"x":384,"y":384},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright1_3","frame":{"w":192,"h":192,"x":576,"y":384},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright1_4","frame":{"w":192,"h":192,"x":768,"y":384},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright1_5","frame":{"w":192,"h":192,"x":960,"y":384},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackright2_0","frame":{"w":192,"h":192,"x":0,"y":576},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright2_1","frame":{"w":192,"h":192,"x":192,"y":576},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright2_2","frame":{"w":192,"h":192,"x":384,"y":576},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright2_3","frame":{"w":192,"h":192,"x":576,"y":576},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright2_4","frame":{"w":192,"h":192,"x":768,"y":576},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackright2_5","frame":{"w":192,"h":192,"x":960,"y":576},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackdown1_0","frame":{"w":192,"h":192,"x":0,"y":768},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown1_1","frame":{"w":192,"h":192,"x":192,"y":768},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown1_2","frame":{"w":192,"h":192,"x":384,"y":768},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown1_3","frame":{"w":192,"h":192,"x":576,"y":768},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown1_4","frame":{"w":192,"h":192,"x":768,"y":768},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown1_5","frame":{"w":192,"h":192,"x":960,"y":768},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackdown2_0","frame":{"w":192,"h":192,"x":0,"y":960},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown2_1","frame":{"w":192,"h":192,"x":192,"y":960},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown2_2","frame":{"w":192,"h":192,"x":384,"y":960},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown2_3","frame":{"w":192,"h":192,"x":576,"y":960},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown2_4","frame":{"w":192,"h":192,"x":768,"y":960},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackdown2_5","frame":{"w":192,"h":192,"x":960,"y":960},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackup1_0","frame":{"w":192,"h":192,"x":0,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup1_1","frame":{"w":192,"h":192,"x":192,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup1_2","frame":{"w":192,"h":192,"x":384,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup1_3","frame":{"w":192,"h":192,"x":576,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup1_4","frame":{"w":192,"h":192,"x":768,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup1_5","frame":{"w":192,"h":192,"x":960,"y":1152},"anchor":{"x":0.5,"y":0.5}},
+
+        {"filename":"attackup2_0","frame":{"w":192,"h":192,"x":0,"y":1344},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup2_1","frame":{"w":192,"h":192,"x":192,"y":1344},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup2_2","frame":{"w":192,"h":192,"x":384,"y":1344},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup2_3","frame":{"w":192,"h":192,"x":576,"y":1344},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup2_4","frame":{"w":192,"h":192,"x":768,"y":1344},"anchor":{"x":0.5,"y":0.5}},
+        {"filename":"attackup2_5","frame":{"w":192,"h":192,"x":960,"y":1344},"anchor":{"x":0.5,"y":0.5}}
+    ],
+    "meta": {
+        "description": "Atlas generated for red_knight",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

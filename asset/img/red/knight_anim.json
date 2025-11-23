@@ -1,0 +1,164 @@
+{
+    "anims": [
+        {
+            "key": "red_knight_attack_up",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_0"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_1"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_2"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_3"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_4"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackup1_5"
+                }
+            ]
+        },
+        {
+            "key": "red_knight_attack_down",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_0"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_1"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_2"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_3"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_4"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackdown1_5"
+                }
+            ]
+        },
+        {
+            "key": "red_knight_attack_right",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_0"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_1"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_2"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_3"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_4"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "attackright2_5"
+                }
+            ]
+        },
+        {
+            "key": "red_knight_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "red_knight",
+                    "frame": "walk_0"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "walk_1"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "walk_2"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "walk_3"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "walk_4"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "walk_5"
+                }
+            ]
+        },
+        {
+            "key": "red_knight_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "red_knight",
+                    "frame": "idle_0"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "idle_1"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "idle_2"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "idle_3"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "idle_4"
+                },
+                {
+                    "key": "red_knight",
+                    "frame": "idle_5"
+                }
+            ]
+        }
+    ]
+}

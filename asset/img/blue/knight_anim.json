@@ -1,0 +1,164 @@
+{
+    "anims": [
+        {
+            "key": "attack_up",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_0"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_1"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_2"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_3"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_4"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackup1_5"
+                }
+            ]
+        },
+        {
+            "key": "attack_down",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_0"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_1"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_2"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_3"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_4"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackdown1_5"
+                }
+            ]
+        },
+        {
+            "key": "attack_right",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_0"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_1"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_2"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_3"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_4"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "attackright2_5"
+                }
+            ]
+        },
+        {
+            "key": "walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_0"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_1"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_2"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_3"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_4"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "walk_5"
+                }
+            ]
+        },
+        {
+            "key": "idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_0"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_1"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_2"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_3"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_4"
+                },
+                {
+                    "key": "blue_knight",
+                    "frame": "idle_5"
+                }
+            ]
+        }
+    ]
+}

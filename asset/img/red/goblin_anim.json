@@ -1,0 +1,168 @@
+{
+    "anims": [
+        {
+            "key": "goblin_attack_up",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_0"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_1"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_2"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_3"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_4"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_up_5"
+                }
+            ]
+        },
+        {
+            "key": "goblin_attack_down",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_0"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_1"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_2"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_3"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_4"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_down_5"
+                }
+            ]
+        },
+        {
+            "key": "goblin_attack_right",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_0"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_11"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_2"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_3"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_4"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_attack_right_5"
+                }
+            ]
+        },
+        {
+            "key": "goblin_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_0"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_2"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_3"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_4"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_5"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_walk_6"
+                }
+            ]
+        },
+        {
+            "key": "goblin_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_0"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_1"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_2"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_3"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_4"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_5"
+                },
+                {
+                    "key": "goblin",
+                    "frame": "goblin_idle_6"
+                }
+            ]
+        }
+    ]
+}

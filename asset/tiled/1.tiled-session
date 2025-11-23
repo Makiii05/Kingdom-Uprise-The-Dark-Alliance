@@ -1,0 +1,125 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Scene/map1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "Scene/map1.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 16,
+            "viewCenter": {
+                "x": 2178,
+                "y": 1804
+            }
+        },
+        "Tileset/Bridge_All.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Tileset/Castle_Blue.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Tileset/Foam.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        },
+        "Tileset/GrassTileSet.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Tileset/GroundTileSet.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Tileset/HappySheep_All.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/House_Blue.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Rocks.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Rocks_01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Rocks_02.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Rocks_03.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Tileset/Rocks_04.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/ShadowsTileSet.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Tower_Blue.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Tower_Construction.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Tileset/Tower_Destroyed.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset/Tree.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 0.33
+        },
+        "Tileset/Water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "frame.defaultDuration": 200,
+    "last.externalTilesetPath": "D:/Anthony/3rd/scielect/game/tiled/Tileset",
+    "last.imagePath": "D:/Anthony/3rd/scielect/game/asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower",
+    "map.height": 40,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "map.width": 40,
+    "openFiles": [
+        "Scene/map1.tmx",
+        "Tileset/Foam.tsx"
+    ],
+    "project": "1.tiled-project",
+    "recentFiles": [
+        "Tileset/Foam.tsx",
+        "Scene/map1.tmx",
+        "Tileset/Rocks_04.tsx",
+        "Tileset/HappySheep_All.tsx",
+        "Tileset/Rocks_01.tsx",
+        "Tileset/Rocks_02.tsx",
+        "Tileset/Rocks_03.tsx",
+        "Tileset/Tree.tsx",
+        "Tileset/Tower_Construction.tsx",
+        "Tileset/Tower_Destroyed.tsx",
+        "Tileset/Tower_Blue.tsx",
+        "Tileset/House_Blue.tsx"
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
