@@ -89,6 +89,6 @@ export default class PreloaderScene extends Phaser.Scene {
 
     create() {
         console.log("All assets preloaded!")
-        this.scene.start('MainScene');
+        this.scene.start('MenuScene');
     }
 }
