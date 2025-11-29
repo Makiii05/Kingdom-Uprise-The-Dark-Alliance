@@ -1,29 +1,47 @@
 export default class Player extends Phaser.Physics.Matter.Sprite {
     constructor(data) {
-        const { scene, x, y, texture, frame } = data;
+        const { scene, x, y, texture, frame, type } = data;
         super(scene.matter.world, x, y, texture, frame);
 
+        this.type = type;
         this.scene = scene;
         scene.add.existing(this);
 
         this.spawnPoint = { x, y };
 
         this.lives = 3;
-        this.hp = 10;
-        this.damage = 2;
-        this.speed = 3;
+        if(this.type === 'archer'){
+            this.hp = 7;
+            this.damage = 4;
+            this.speed = 4;
+            this.walk = 'archer_walk';
+            this.idle = 'archer_idle'
+
+            this.weapon = scene.add.sprite(this.x, this.y, 'archer_weapon');
+            this.weapon.setScale(0.8);
+            this.weapon.setDepth(999);
+
+            this.arrowSize = 0.8;
+            this.arrowSpeed = 15;
+        } else if(this.type === 'knight') {
+            this.hp = 10;
+            this.damage = 2;
+            this.speed = 3;
+            this.walk = 'knight_walk';
+            this.idle = 'knight_idle'
+        }
         this.lastDirection = 'right';
         this.isAttacking = false;
-
+        this.isShooting = false;
         this.isDashing = false; 
         this.canDash = true;
-        this.dashSpeed = 30;
+        this.dashSpeed = 100;
         this.dashDuration = 300; 
         this.dashCooldown = 1000; 
 
         this.isAttackSpeeding = false;
         this.canAttackSpeed = true;
-        this.attackSpeed = 48;
+        this.attackSpeed = type == 'archer' ? 96 : 48;
         this.attackSpeedDuration = 5000;
         this.attackSpeedCooldown = 7000;
 
@@ -32,6 +50,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.goliath = 2.7;
         this.goliathDuration = 5000;
         this.goliathCooldown = 15000;
+
+        this.isBuilding = false;
+        this.canBuild = true;
+        this.buildExp = 0;
+        this.buildExpNeeded = 100;
 
         this.createBody(24, 48);
         this.setFixedRotation();
@@ -42,13 +65,20 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         scene.load.atlas(
             'blue_knight',
             'asset/img/blue/knight.png',
-            'asset/img/blue/knight_atlas.json',
-            'asset/img/sword_swing.json'
+            'asset/img/blue/knight_atlas.json'
         );
         scene.load.animation(
             'blue_knight_anim',
-            'asset/img/blue/knight_anim.json',
-            'asset/img/sword_swing.json'
+            'asset/img/blue/knight_anim.json'
+        );
+        scene.load.atlas(
+            'blue_archer',
+            'asset/img/blue/archer.png',
+            'asset/img/blue/archer_atlas.json'
+        );
+        scene.load.animation(
+            'blue_archer_anim',
+            'asset/img/blue/archer_anim.json'
         );
     }
 
@@ -74,6 +104,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     }
 
     update() {
+        if(this.type === 'archer'){
+            this.handleWeapon()
+            if (this.isShooting && !this.isAttacking) {
+                this.shootArrow();
+            }
+
+        }
         this.handleMovement();
         this.handleAttack();
         this.handleAnimation();
@@ -81,7 +118,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     }
 
     handleMovement() {
-        if (this.isAttacking || this.isDashing) return;
+        if (this.isDashing) return;
 
         const v = new Phaser.Math.Vector2();
 
@@ -124,15 +161,35 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
                 this.setFlipX(true);
                 this.lastDirection = 'left';
             }
-            this.anims.play('walk', true);
+            this.anims.play(this.walk, true);
         } else {
-            this.anims.play('idle', true);
+            this.anims.play(this.idle, true);
         }
+    }
+
+    handleWeapon(){
+        if (!this.weapon) return;
+
+        const pointer = this.scene.input.activePointer;
+        const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
+
+        this.angle = Phaser.Math.Angle.Between(this.x, this.y, worldPoint.x, worldPoint.y);
+        if(worldPoint.x >= this.x){
+            this.weapon.setFlipY(false);
+            this.weapon.x = this.x + 8;
+            this.weapon.y = this.y;
+        }else{
+            this.weapon.setFlipY(true);
+            this.weapon.x = this.x - 8;
+            this.weapon.y = this.y;
+        }
+
+        this.weapon.setRotation(this.angle);
     }
 
     handleDash() {
         if (!this.canDash || this.isDashing) return;
-        
+        this.scene.sound.play("dash_sfx")
         this.setTint(0x00ffff);
         this.scene.time.delayedCall(this.dashDuration, () => {
             this.clearTint();
@@ -169,7 +226,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     handleAttackSpeed(){
         if (!this.canAttackSpeed || this.isAttackSpeeding) return;
-        
+        this.scene.sound.play("power_up")
         this.setTint(0xff00ff);
         this.scene.time.delayedCall(this.attackSpeedDuration, () => {
             this.clearTint();
@@ -180,24 +237,31 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         
         this.scene.time.delayedCall(this.attackSpeedDuration, () => {
             this.isAttackSpeeding = false;
-            this.scene.anims.anims.entries['attack_right'].frameRate = 12
-            this.scene.anims.anims.entries['attack_up'].frameRate = 12
-            this.scene.anims.anims.entries['attack_down'].frameRate = 12
+            if(this.type === 'archer'){
+                this.scene.anims.anims.entries['archer_weapon_shoot'].frameRate = 24
+            } else if(this.type === 'knight'){
+                this.scene.anims.anims.entries['knight_attack_right'].frameRate = 12
+                this.scene.anims.anims.entries['knight_attack_up'].frameRate = 12
+                this.scene.anims.anims.entries['knight_attack_down'].frameRate = 12
+            }
         });
 
         this.scene.time.delayedCall(this.attackSpeedCooldown, () => {
             this.canAttackSpeed = true;
         });
 
-        this.scene.anims.anims.entries['attack_right'].frameRate = 48
-        this.scene.anims.anims.entries['attack_up'].frameRate = 48
-        this.scene.anims.anims.entries['attack_down'].frameRate = 48
-
+        if(this.type === 'archer'){
+            this.scene.anims.anims.entries['archer_weapon_shoot'].frameRate = this.attackSpeed
+        } else if(this.type === 'knight'){
+            this.scene.anims.anims.entries['knight_attack_right'].frameRate = this.attackSpeed
+            this.scene.anims.anims.entries['knight_attack_up'].frameRate = this.attackSpeed
+            this.scene.anims.anims.entries['knight_attack_down'].frameRate = this.attackSpeed
+        }
     }
 
     handleGoliath(){
         if (!this.canGoliath || this.isGoliath) return;
-        
+        this.scene.sound.play("power_up")
         this.setTint(0xffff00);
         this.scene.time.delayedCall(this.goliathDuration, () => {
             this.clearTint();
@@ -211,9 +275,14 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.scene.matter.world.remove(this.playerCollider);
             this.scene.matter.world.remove(this.playerSensor);
             this.damage = 2
-            this.setScale(0.7); // x3 size
+            this.setScale(0.7);
             this.createBody(24, 48);
             this.setFixedRotation();
+            if(this.type === 'archer'){
+                this.weapon.setScale(0.8);
+                this.arrowSize = 0.8;
+                this.arrowSpeed = 15
+            }
         });
 
         this.scene.time.delayedCall(this.goliathCooldown, () => {
@@ -223,10 +292,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.scene.matter.world.remove(this.playerCollider);
         this.scene.matter.world.remove(this.playerSensor);
         this.damage = this.damage * this.goliath
-        this.setScale(this.goliath); // x3 size
+        this.setScale(this.goliath);
         this.createBody(72, 192);
         this.setFixedRotation();
         console.log("Goliath Activated");
+        if(this.type === 'archer'){
+            this.weapon.setScale(this.goliath);
+            this.arrowSize = this.goliath;
+            this.arrowSpeed = this.arrowSpeed * this.goliath
+        }
+    }
+
+    handleBuild(){
+        if (!this.canBuild || this.isBuilding) return;
     }
 
     handleSkillAttack(){
@@ -239,32 +317,48 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         }else if (this.inputKeys && Phaser.Input.Keyboard.JustDown(this.inputKeys.c)) {
             this.handleGoliath();
             return;
+        }else if (this.inputKeys && Phaser.Input.Keyboard.JustDown(this.inputKeys.b)) {
+            this.handleBuild();
+            return;
         }
+        
     }
 
     handleAttack() {
         if (this.isAttacking || this.isDashing) return;
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.space)) {
+            if(this.type != "knight") return;
             this.isAttacking = true;
             this.speed = 2;
 
-            if (this.lastDirection === 'left' || this.lastDirection === 'right') {
-                this.anims.play('attack_right', false);
-            } else if (this.lastDirection === 'up') {
-                this.anims.play('attack_up', false);
-            } else if (this.lastDirection === 'down') {
-                this.anims.play('attack_down', false);
+            if(this.type === 'knight'){
+                if (this.lastDirection === 'left' || this.lastDirection === 'right') {
+                    this.anims.play('knight_attack_right', false);
+                } else if (this.lastDirection === 'up') {
+                    this.anims.play('knight_attack_up', false);
+                } else if (this.lastDirection === 'down') {
+                    this.anims.play('knight_attack_down', false);
+                }
+                this.scene.sound.play("sword_atk", {
+                    volume: 0.5
+                })
             }
 
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.isAttacking = false;
                 this.speed = 3;
-                this.anims.play('idle', true);
+                this.anims.play(this.idle, true);
 
                 const enemies = this.scene.enemies.filter(enemy => {
+                    let range = 60 * (this.isGoliath ? this.goliath + 1 : 1);
+                
+                    if (enemy.enemyType === 'boss_orc') {
+                        range += 100; 
+                    }
+
                     const distance = Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y);
-                    return distance <= 50*(this.isGoliath ? this.goliath + 1 : 1);
+                    return distance <= range; 
                 });
 
                 enemies.forEach(enemy => {
@@ -273,14 +367,90 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
             });
         }
+
+        if (this.type === 'archer') {
+            this.scene.input.on('pointerdown', (pointer) => {
+                if (pointer.leftButtonDown()) this.isShooting = true;
+            });
+
+            this.scene.input.on('pointerup', (pointer) => {
+                if (pointer.leftButtonReleased()) this.isShooting = false;
+            });
+        }
+
+    }
+
+    shootArrow() {
+        if (this.isAttacking) return;
+
+        this.isAttacking = true;
+        this.speed = 2;
+
+        this.weapon.anims.play('archer_weapon_shoot', false);
+
+        this.scene.sound.play("sword_atk", {
+            volume: 0.5
+        })
+        this.weapon.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.isAttacking = false;
+            this.speed = 4;
+            this.handleArrowTravel();
+
+            // Optional: small delay between shots
+            this.scene.time.delayedCall(100, () => {
+                if (this.isShooting) this.shootArrow();
+            });
+        });
+    }
+
+    handleArrowTravel() {
+        const angle = this.weapon.rotation; 
+
+        const spawnX = this.weapon.x;
+        const spawnY = this.weapon.y;
+
+        const arrow = this.scene.matter.add.sprite(spawnX, spawnY, 'arrow');
+
+        arrow.setScale(this.arrowSize);
+        
+        arrow.setBody({
+            type: 'rectangle',
+            width: 32,
+            height: 8,
+        });
+        arrow.setSensor(true);
+        
+        arrow.damage = this.damage;
+
+        arrow.setOnCollide((data) => {
+            const bodyA = data.bodyA;
+            const targetGameObject = bodyA.gameObject;
+
+            if (targetGameObject && bodyA.label === 'enemyCollider') {
+                if (typeof targetGameObject.takeDamage === 'function' && targetGameObject !== this) {
+                    targetGameObject.takeDamage(arrow.damage);
+                    if(!this.isGoliath || targetGameObject.enemyType === "boss_orc")
+                        arrow.destroy();
+                    return;
+
+                }
+            }
+        });
+
+        const speed = this.arrowSpeed;
+        arrow.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        arrow.setRotation(angle);
+
+        this.scene.time.delayedCall(2000, () => {
+            if (arrow.active) arrow.destroy();
+        });
     }
 
     takeDamage(amount) {
-         if (this.isDashing) {
-            return;
-        }
+         if (this.isDashing) return;
 
         this.hp -= amount;
+        console.log("Player HP:", this.hp);
         if(!this.isAttackSpeeding) {
             this.setTint(0xff0000);
             this.scene.time.delayedCall(200, () => {
@@ -296,6 +466,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         }
         if (this.lives <= 0) {
             console.log("Game Over");
+            this.scene.main_sound.stop()
             this.scene.scene.restart();
         }
     }

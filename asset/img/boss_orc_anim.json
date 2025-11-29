@@ -1,0 +1,304 @@
+{
+    "anims": [
+        {
+            "key": "boss_orc_attack",
+            "type": "frames",
+            "repeat": 0,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0001"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0011"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0021"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0031"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0041"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0051"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0061"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0071"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0061"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0071"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0061"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0061"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0071"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile000"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile001"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile002"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile003"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile004"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile005"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile006"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile007"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile008"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile009"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile010"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile011"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile012"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile013"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile014"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile015"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile016"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile017"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile018"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile019"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile020"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile021"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile022"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile023"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile023"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0001"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0011"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0021"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0031"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0041"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0051"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0061"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0071"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0081"
+                }
+            ]
+        },
+        {
+            "key": "boss_orc_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0003"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0013"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0023"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0033"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0043"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0053"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0063"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0073"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0083"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0093"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0103"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0113"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0123"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0133"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0143"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0153"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0163"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0173"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0183"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0193"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0203"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0213"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0223"
+                },
+                {
+                    "key": "boss_orc",
+                    "frame": "tile0233"
+                }
+            ]
+        }
+    ]
+}

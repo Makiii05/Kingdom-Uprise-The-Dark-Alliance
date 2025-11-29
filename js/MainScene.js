@@ -1,3 +1,5 @@
+import Boss from "./Boss.js"
+import Castle from "./Castle.js";
 import Enemy from "./Enemy.js"
 import Player from "./Player.js"
 
@@ -6,38 +8,25 @@ export default class MainScene extends Phaser.Scene {
         super("MainScene")
     }
 
-    preload() {
-        Player.preload(this)
-        Enemy.preload(this)
-        this.load.image("GrassTileSet", 'asset/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png')
-        this.load.image("Bridge_All", 'asset/Tiny Swords (Update 010)/Terrain/Bridge/Bridge_All.png')
-        this.load.image("Castle_Blue", 'asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png')
-        this.load.image("Foam", 'asset/Tiny Swords (Update 010)/Terrain/Water/Foam/Foam.png')
-        this.load.image("GroundTileSet", 'asset/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Elevation.png')
-        this.load.image("Rocks_01", 'asset/Tiny Swords (Update 010)/Terrain/Water/Rocks/Rocks_01.png')
-        this.load.image("Rocks_02", 'asset/Tiny Swords (Update 010)/Terrain/Water/Rocks/Rocks_02.png')
-        this.load.image("Rocks_03", 'asset/Tiny Swords (Update 010)/Terrain/Water/Rocks/Rocks_03.png')
-        this.load.image("Rocks_04", 'asset/Tiny Swords (Update 010)/Terrain/Water/Rocks/Rocks_04.png')
-        this.load.image("ShadowsTileSet", 'asset/Tiny Swords (Update 010)/Terrain/Ground/Shadows.png')
-        this.load.image("Water", 'asset/Tiny Swords (Update 010)/Terrain/Water/Water.png') 
-        this.load.image("House_Blue", 'asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png')
-        this.load.image("Tower_Blue", 'asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Blue.png')
-        this.load.image("Tower_Destroyed", 'asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Destroyed.png')
-        this.load.image("Tree", 'asset/Tiny Swords (Update 010)/Resources/Trees/Tree.png')
-        this.load.image("HappySheep_All", 'asset/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_All.png')
-        this.load.image("Tower_Construction", 'asset/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Construction.png')
-
-        this.load.spritesheet('dead', 'asset/img/Dead.png', { frameWidth: 128, frameHeight: 128 });
-
-        this.load.tilemapTiledJSON('map', 'asset/tiled/Scene/map1_embedded.json')    
+    create() {
+        this.scene.launch('HudScene'); 
+        this.scene.bringToTop('HudScene');
+        this.drawTileMap()
+        this.spawnPlayer()
+        this.spawnCastle()
+        this.spawnEnemy();
+        this.handleAnimation()
+        this.main_sound = this.sound.add("in_game_sound", {
+            loop: true
+        })
+        this.main_sound.play()
     }
 
-    create() {
-        //--------------------TILED MAP
+    drawTileMap() {
         const map = this.make.tilemap({key:'map'})
 
         const bridge = map.addTilesetImage('Bridge_All', 'Bridge_All')
-        const castle = map.addTilesetImage('Castle_Blue', 'Castle_Blue')
+        const castle = map.addTilesetImage('Castle_Destroyed', 'Castle_Destroyed')
         const foam = map.addTilesetImage('Foam', 'Foam')
         const grass = map.addTilesetImage('GrassTileSet', 'GrassTileSet')
         const ground = map.addTilesetImage('GroundTileSet', 'GroundTileSet')
@@ -59,6 +48,13 @@ export default class MainScene extends Phaser.Scene {
             shadows, water, house, tower, destroyed, tree, sheep, towerC
         ]
 
+        const animatedTileLayer = {
+            'Foam1_bottom': true, 
+            'Foam1_top': true, 
+            'Building_bottom': true, 
+            'Building_top': true
+        }
+
         const layerNames = [
             'Water', 'Foam1_bottom', 'Foam1_top', 'Grass1', 'Bridge', 'Shadow1_bottom', 
             'Shadow1_top', 'Ground1', 'Main', 'Shadow2_bottom', 'Shadow2_top', 'Ground2', 
@@ -70,6 +66,12 @@ export default class MainScene extends Phaser.Scene {
             const layer = map.createLayer(layerName, allTilesets, -1375, -1000)
             if (layer) {
                 layer.setScale(scale)
+                
+                // Handle animated tiles for this layer
+                if(animatedTileLayer[layerName]){
+                    this.setupTileAnimation(map, layer);
+                }
+                
                 if(layerName == "Collision"){
                     layer.setCollisionByProperty({collide:true})
                     layer.setVisible(false)
@@ -77,9 +79,69 @@ export default class MainScene extends Phaser.Scene {
                 }
             }
         })
+    }
 
-        //--------------------PLAYER
-        this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY, texture:'blue_knight', frame:'idle_0'})
+    setupTileAnimation(map, layer) {
+        // Get animated tiles from the map data
+        const animatedTiles = [];
+        
+        // Loop through all tilesets to find animation data
+        map.tilesets.forEach(tileset => {
+            // Access the tiles array from the tileset
+            if (tileset.tileData) {
+                Object.keys(tileset.tileData).forEach(tileId => {
+                    const tileData = tileset.tileData[tileId];
+                    if (tileData && tileData.animation) {
+                        animatedTiles.push({
+                            firstGid: tileset.firstgid,
+                            tileId: parseInt(tileId),
+                            gid: tileset.firstgid + parseInt(tileId),
+                            animation: tileData.animation
+                        });
+                    }
+                });
+            }
+        });
+
+        // Create time-based animation system
+        if (animatedTiles.length > 0) {
+            // Store animation state for each tile position
+            const tileAnimations = new Map();
+            
+            // Find all tiles in the layer that have animations
+            layer.forEachTile(tile => {
+                if (tile.index !== -1) {
+                    // Find animation data for this tile
+                    const animData = animatedTiles.find(at => at.gid === tile.index);
+                    if (animData) {
+                        const key = `${tile.x}_${tile.y}`;
+                        tileAnimations.set(key, {
+                            tile: tile,
+                            frames: animData.animation,
+                            currentFrame: 0,
+                            elapsed: 0,
+                            firstGid: animData.firstGid
+                        });
+                    }
+                }
+            });
+
+            // Store animation states for update loop
+            if (tileAnimations.size > 0) {
+                if (!this.tileAnimationStates) {
+                    this.tileAnimationStates = [];
+                }
+                this.tileAnimationStates.push({ layer, tileAnimations });
+            }
+        }
+    }
+
+    spawnPlayer(){
+        if (this.playerType === 'knight') {
+            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY, texture:'blue_knight', frame:'idle_0', type: 'knight'})
+        } else {
+            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY, texture:'blue_archer', frame:'idle_0', type: 'archer'})
+        }
 
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
         this.player.inputKeys = this.input.keyboard.addKeys({
@@ -90,10 +152,16 @@ export default class MainScene extends Phaser.Scene {
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
             q: Phaser.Input.Keyboard.KeyCodes.Q,
             e: Phaser.Input.Keyboard.KeyCodes.E,
-            c: Phaser.Input.Keyboard.KeyCodes.C
+            c: Phaser.Input.Keyboard.KeyCodes.C,
+            b: Phaser.Input.Keyboard.KeyCodes.B
         })
+    }
 
-        //--------------------ENEMY
+    spawnCastle(){
+        this.castle = new Castle({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY - 140, texture:'Castle_Blue'})
+    }
+
+    spawnEnemy() {
         this.enemies = [];
         this.enemyType = [{
                 type: 'red_knight', 
@@ -105,8 +173,17 @@ export default class MainScene extends Phaser.Scene {
                 texture: 'goblin',
                 frame: 'goblin_idle_0',
                 target: this.player
+            },{
+                type: 'red_knight', 
+                texture: 'red_knight',
+                frame: 'idle_0',
+                target: this.castle
+            },{
+                type: 'goblin', 
+                texture: 'goblin',
+                frame: 'goblin_idle_0',
+                target: this.castle
             }
-            //will add  target tower later
         ]
         this.spawnPoints = [
             { x: 47, y: 773 }, { x: 73, y: 823 }, { x: 118, y: 828 }, { x: 160, y: 834 }, { x: 200, y: 893 }, { x: 147, y: 970 }, 
@@ -125,35 +202,70 @@ export default class MainScene extends Phaser.Scene {
             { x: 2026, y: 790 }, { x: 1943, y: 806 }, { x: 1919, y: 681 }, { x: 2000, y: 855 }, { x: 1976, y: 954 }, { x: 1839, y: 948 }, 
             { x: 1758, y: 1037 }, { x: 1830, y: 1067 }, { x: 1592, y: 1017 }, { x: 1508, y: 951 }, { x: 1419, y: 912 }
         ]
-        this.enemytotal = 1000
-        this.waveNumber = 100
-        this.enemyleft = 1000
-        this.waveInterval = 5000
+        this.enemytotal = 5;
+        this.waveNumber = 1; 
+        this.enemySpawned = 0;
+        this.enemyLeft = this.enemytotal; 
+        this.waveInterval = 5000;
+        this.bossSpawned = false;
+
         setInterval(() => {
-            if(this.enemyleft > 0){
-                for (let i = 0; i < this.enemytotal/this.waveNumber; i++) {
+            if(this.enemyLeft > 0 && this.enemySpawned < 50){ 
+                for (let i = 0; i < this.enemytotal / this.waveNumber; i++) {
+                    if (this.enemyLeft <= 0) break;
+
                     const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
                     const enemyType = Phaser.Utils.Array.GetRandom(this.enemyType);
                     const enemy = new Enemy({scene:this, x: spawnPoint.x, y: spawnPoint.y, texture: enemyType.texture, frame: enemyType.frame, target: enemyType.target, type: enemyType.type});
-                    this.enemies.push(enemy);
-                    this.enemyleft -= 1   
+                    this.enemies.push(enemy);  
+                    
+                    this.enemyLeft--;
+                    this.enemySpawned++;
                 }
             }
+            else if (this.enemyLeft <= 0 && !this.bossSpawned && this.enemies.length === 0) {                
+                const boss = new Boss({scene:this, x: 2000, y: 1000, texture: 'boss_orc', frame: 'tile000', target: this.player, type: 'boss_orc'});
+                this.enemies.push(boss);
+                this.bossSpawned = true; 
+            }
+            if(this.enemies.length <= 0 && this.enemyLeft <= 0){
+                this.startNextWave()
+            }
         }, this.waveInterval);
-
-        //--------------------ANIMATIONS
-        this.anims.create({
-            key: 'enemy_death',
-            frames: this.anims.generateFrameNumbers('dead', { start: 0, end: 13 }),
-            frameRate: 12,
-            repeat: 0
-        });
-        
     }
 
+    handleAnimation (){
+        if(!this.anims.exists('enemy_death')){
+            this.anims.create({
+                key: 'enemy_death',
+                frames: this.anims.generateFrameNumbers('dead', { start: 0, end: 13 }),
+                frameRate: 12,
+                repeat: 0
+            });
+        }
+        if(!this.anims.exists('archer_weapon_shoot')){
+            this.anims.create({
+                key: 'archer_weapon_shoot',
+                frames: this.anims.generateFrameNumbers('archer_weapon_anim', { start: 0, end: 7 }),
+                frameRate: 24,
+                repeat: 0
+            });
+        }
+    }
+
+    startNextWave() {
+        console.log("Wave Complete! Starting next wave...");
+        
+        this.waveNumber++;
+        this.enemytotal += 5; 
+        this.enemyLeft = this.enemytotal;
+        this.enemySpawned = 0;
+        this.bossSpawned = false;
+    }
     
-    update(){
+    update(time, delta){
         this.player.update()
+        this.castle.update()
         this.enemies.forEach(enemy => {
             enemy.update();
         });
@@ -163,5 +275,28 @@ export default class MainScene extends Phaser.Scene {
             }
         });
 
+        // Update tile animations
+        if (this.tileAnimationStates) {
+            this.tileAnimationStates.forEach(state => {
+                state.tileAnimations.forEach(animData => {
+                    animData.elapsed += delta;
+                    
+                    const currentFrameData = animData.frames[animData.currentFrame];
+                    
+                    if (animData.elapsed >= currentFrameData.duration) {
+                        animData.elapsed = 0;
+                        animData.currentFrame = (animData.currentFrame + 1) % animData.frames.length;
+                        
+                        // Get the next frame's tile ID
+                        const nextFrameData = animData.frames[animData.currentFrame];
+                        // Calculate the new tile index (firstGid + tileid from animation)
+                        const newTileId = animData.firstGid + nextFrameData.tileid;
+                        
+                        // Update the tile's index to show the new frame
+                        animData.tile.index = newTileId;
+                    }
+                });
+            });
+        }
     }
 }

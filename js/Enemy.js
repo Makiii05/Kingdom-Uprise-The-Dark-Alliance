@@ -3,6 +3,7 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
         const { scene, x, y, texture, frame, target, type } = data;
         super(scene.matter.world, x, y, texture, frame);
 
+        this.enemyType = type;
         this.scene = scene;
         scene.add.existing(this);
         this.target = target; 
@@ -69,8 +70,11 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
         if (this.isAttacking || !this.target) return;
 
         const direction = new Phaser.Math.Vector2(this.target.x - this.x, this.target.y - this.y);
-
-        if (direction.length() > this.attackRange) {
+        var condition = direction.length() > this.attackRange
+        if(this.target.texture.key == "Castle_Blue"){
+            condition = !Phaser.Physics.Matter.Matter.Collision.collides(this.body, this.target.body)
+        }
+        if (condition) {
             direction.normalize().scale(this.speed);
             this.setVelocity(direction.x, direction.y);
             if (this.velocity.x > 0) {
@@ -104,7 +108,6 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
         }
     }
 
-
     handleAttack() {
         if (this.isAttacking || (Date.now() - this.lastAttackTime) < this.attackInterval) return;
 
@@ -128,9 +131,12 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
             this.isAttacking = false;
             this.speed = 2;
             this.anims.play(`${this.idle}`, true);
-            const distance = Phaser.Math.Distance.Between(this.x, this.y, this.target.x, this.target.y);
-            if (distance <= this.attackRange) { // Attack range
-                this.target.takeDamage(this.damage);
+            
+            if (this.body && this.target.body) {
+                const touching = Phaser.Physics.Matter.Matter.Collision.collides(this.body, this.target.body);
+                if (touching) {
+                    this.target.takeDamage(this.damage);
+                }
             }
         });
     }

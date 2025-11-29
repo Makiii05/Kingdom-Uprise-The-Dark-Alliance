@@ -1,0 +1,68 @@
+{
+    "anims": [
+        {
+            "key": "archer_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_0"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_1"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_2"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_3"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_4"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "idle_5"
+                }
+            ]
+        },
+        {
+            "key": "archer_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_0"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_1"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_2"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_3"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_4"
+                },
+                {
+                    "key": "blue_archer",
+                    "frame": "walk_5"
+                }
+            ]
+        }
+    ]
+}

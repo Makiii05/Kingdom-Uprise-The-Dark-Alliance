@@ -1,4 +1,7 @@
-import MainScene from "./MainScene.js";
+import HudScene from "./HudScene.js";
+import MainScene from "./mainScene.js";
+import MenuScene from "./MenuScene.js";
+import PreloaderScene from "./PreloaderScene.js";
 
 const config = {
     width: 1280,
@@ -10,11 +13,12 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        expandParent: true,      // <-- THIS MAKES IT FILL SCREEN
+        expandParent: true,
         zoom: 1,
     },
 
-    scene: [MainScene],
+    // scene: [PreloaderScene, MenuScene, MainScene, HudScene],
+    scene: [PreloaderScene, MainScene, HudScene],
 
     physics: {
         default: 'matter',
@@ -23,6 +27,7 @@ const config = {
             gravity: { y: 0 }
         }
     },
+
 };
 
 new Phaser.Game(config);

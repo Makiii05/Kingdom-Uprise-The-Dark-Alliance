@@ -1,7 +1,7 @@
 {
     "anims": [
         {
-            "key": "attack_up",
+            "key": "knight_attack_up",
             "type": "frames",
             "repeat": 0,
             "frameRate": 12,
@@ -33,7 +33,7 @@
             ]
         },
         {
-            "key": "attack_down",
+            "key": "knight_attack_down",
             "type": "frames",
             "repeat": 0,
             "frameRate": 12,
@@ -65,7 +65,7 @@
             ]
         },
         {
-            "key": "attack_right",
+            "key": "knight_attack_right",
             "type": "frames",
             "repeat": 0,
             "frameRate": 12,
@@ -97,7 +97,7 @@
             ]
         },
         {
-            "key": "walk",
+            "key": "knight_walk",
             "type": "frames",
             "repeat": -1,
             "frameRate": 12,
@@ -129,7 +129,7 @@
             ]
         },
         {
-            "key": "idle",
+            "key": "knight_idle",
             "type": "frames",
             "repeat": -1,
             "frameRate": 12,
