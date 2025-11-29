@@ -1,5 +1,5 @@
 import HudScene from "./HudScene.js";
-import MainScene from "./mainScene.js";
+import MainScene from "./MainScene.js";
 import MenuScene from "./MenuScene.js";
 import PreloaderScene from "./PreloaderScene.js";
 
@@ -17,8 +17,7 @@ const config = {
         zoom: 1,
     },
 
-    // scene: [PreloaderScene, MenuScene, MainScene, HudScene],
-    scene: [PreloaderScene, MainScene, HudScene],
+    scene: [PreloaderScene, MenuScene, MainScene, HudScene],
 
     physics: {
         default: 'matter',
