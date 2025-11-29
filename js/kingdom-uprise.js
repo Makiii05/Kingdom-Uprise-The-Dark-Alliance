@@ -1,5 +1,5 @@
 import HudScene from "./HudScene.js";
-import MainScene from "./MainScene.js";
+import MainScene from "./mainScene.js";
 import MenuScene from "./MenuScene.js";
 import PreloaderScene from "./PreloaderScene.js";
 
