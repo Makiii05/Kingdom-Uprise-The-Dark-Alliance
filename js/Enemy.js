@@ -153,6 +153,7 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
             this.setVelocity(0, 0);
             this.setCollisionCategory(null);
             this.scene.enemies = this.scene.enemies.filter(e => e !== this);
+            this.scene.player.buildExp += 5;
             this.anims.play('enemy_death', false);
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.destroy();

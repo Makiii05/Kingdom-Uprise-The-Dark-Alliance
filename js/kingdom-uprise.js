@@ -17,7 +17,8 @@ const config = {
         zoom: 1,
     },
 
-    scene: [PreloaderScene, MenuScene, MainScene, HudScene],
+    // scene: [PreloaderScene, MenuScene, MainScene, HudScene],
+    scene: [PreloaderScene, MainScene, HudScene],
 
     physics: {
         default: 'matter',

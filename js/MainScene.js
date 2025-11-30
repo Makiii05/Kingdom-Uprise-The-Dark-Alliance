@@ -2,6 +2,7 @@ import Boss from "./Boss.js"
 import Castle from "./Castle.js";
 import Enemy from "./Enemy.js"
 import Player from "./Player.js"
+import Tower from "./Tower.js";
 
 export default class MainScene extends Phaser.Scene {
     constructor(){
@@ -15,6 +16,10 @@ export default class MainScene extends Phaser.Scene {
         this.spawnPlayer()
         this.spawnCastle()
         this.spawnEnemy();
+        this.createTower(155, 325);
+        this.createTower(350, 80);
+        this.createTower(925, 80);
+        this.createTower(1180, 200);
         this.handleAnimation()
         this.main_sound = this.sound.add("in_game_sound", {
             loop: true
@@ -138,9 +143,9 @@ export default class MainScene extends Phaser.Scene {
 
     spawnPlayer(){
         if (this.playerType === 'knight') {
-            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY, texture:'blue_knight', frame:'idle_0', type: 'knight'})
+            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_knight', frame:'idle_0', type: 'knight'})
         } else {
-            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY, texture:'blue_archer', frame:'idle_0', type: 'archer'})
+            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_archer', frame:'idle_0', type: 'archer'})
         }
 
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -234,6 +239,15 @@ export default class MainScene extends Phaser.Scene {
         }, this.waveInterval);
     }
 
+    createTower(x, y) {
+        const newTower = new Tower(this, x, y, 'Tower_Construction');
+        if (!this.towers) {
+            this.towers = [];
+            this.tower_archers = []
+        }
+        this.towers.push(newTower);
+    }
+
     handleAnimation (){
         if(!this.anims.exists('enemy_death')){
             this.anims.create({
@@ -269,13 +283,18 @@ export default class MainScene extends Phaser.Scene {
         this.enemies.forEach(enemy => {
             enemy.update();
         });
+        this.towers.forEach(tower => {
+            tower.update();
+        });
+        this.tower_archers.forEach(tower_archer => {
+            tower_archer.update();
+        });
         this.children.each(child => {
             if (child.setDepth) {
-                child.setDepth(child.y);
+                child.setDepth(child.y + (child.depthOffset || 0));
             }
         });
 
-        // Update tile animations
         if (this.tileAnimationStates) {
             this.tileAnimationStates.forEach(state => {
                 state.tileAnimations.forEach(animData => {

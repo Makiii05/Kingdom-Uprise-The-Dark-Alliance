@@ -157,7 +157,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
 
     takeDamage(amount) {
         this.hp -= amount;
-        console.log("Castle HP:", this.hp);
         
         // Visual feedback
         this.setTint(0xff0000);
@@ -169,7 +168,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
         this.updateHealthBar();
 
         if (this.hp <= 0) {
-            console.log("Game Over");
             this.scene.main_sound.stop()
             this.scene.scene.restart();
         }

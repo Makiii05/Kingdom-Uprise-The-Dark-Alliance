@@ -1,11 +1,10 @@
 export default class HudScene extends Phaser.Scene {
-    constructor(){
+    constructor() {
         super("HudScene")
     }
 
-    preload(){
+    preload() {
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
-
         this.load.image('info_hud', 'asset/img/info_hud.png');
         this.load.image('skill_hud', 'asset/img/skill_hud.png');
         this.load.image('key_ring', 'asset/img/key_ring.png');
@@ -14,32 +13,48 @@ export default class HudScene extends Phaser.Scene {
         this.load.image('skill_c', 'asset/img/goliath.png');
         this.load.image('ability_bar', 'asset/img/ability_bar.png');
         this.load.image('ready_ability_bar', 'asset/img/ready_ability_bar.png');
+        this.load.image('background_heart', 'asset/img/heart/background.png');
+        this.load.image('heart', 'asset/img/heart/heart.png');
     }
 
-    create(){
-        this.main = this.scene.get('MainScene'); 
-        this.drawSkillHUD();
-        this.drawAbilityBar();
-        this.drawStatusPanel();
-
-        this.portraitIcon = "archer_idle"
-        if(this.main.player.type === 'archer'){
-            this.portraitIcon = "archer_idle"
-        }else{
-            this.portraitIcon = "knight_idle"
-        }
-        this.playerProfile = this.add.sprite(95, 60, this.portraitIcon).setScale(1.5);
-        this.playerProfile.play(this.portraitIcon);
+    create() {
+        this.main = this.scene.get('MainScene');
         this.playerBaseHp = this.main.player.hp;
+        this.maxBarHeight = 200;
         this.cd = [
             this.main.player.dashCooldown,
             this.main.player.attackSpeedCooldown,
             this.main.player.goliathCooldown
         ];
+        this.lives = this.main.player.lives
+        this.maxLives = this.lives;
+
+        this.drawSkillHUD();
+        this.drawAbilityBar();
+        this.drawStatusPanel();
+
+        this.portraitIcon = "archer_idle"
+        if (this.main.player.type === 'archer') {
+            this.portraitIcon = "archer_idle"
+        } else {
+            this.portraitIcon = "knight_idle"
+        }
+        this.playerProfile = this.add.sprite(95, 60, this.portraitIcon).setScale(1.5);
+        this.playerProfile.play(this.portraitIcon);
     }
 
     update() {
-        // ---------- Skill Cooldowns ----------
+        // ... ability ...
+        this.expFill.height = (this.main.player.buildExp/100 * this.maxBarHeight);
+        if(this.expFill.height/this.maxBarHeight * 100 >= this.main.player.buildExpNeeded){
+            this.abilityBarImage.setTexture('ready_ability_bar');
+            this.expFill.setVisible(false);
+        }else{
+            this.abilityBarImage.setTexture('ability_bar');
+            this.expFill.setVisible(true);
+        }
+
+        // ... cooldown ...
         const cooldowns = [
             this.main.player.dashCooldown,
             this.main.player.attackSpeedCooldown,
@@ -53,7 +68,7 @@ export default class HudScene extends Phaser.Scene {
         ];
 
         abilities.forEach((canUse, index) => {
-            const skillSizer = this.conSizer.getChildren()[index];
+            const skillSizer = this.conSkill.getChildren()[index];
             const icon = skillSizer.getByName('skillIcon');
             const iconText = skillSizer.getByName('iconText');
 
@@ -63,7 +78,7 @@ export default class HudScene extends Phaser.Scene {
                 icon.setTint(0x444444);
                 this.cd[index] -= this.game.loop.delta;
 
-                if (this.cd[index] < 0) 
+                if (this.cd[index] < 0)
                     this.cd[index] = 0;
 
                 const seconds = (this.cd[index] / 1000).toFixed(1);
@@ -75,15 +90,24 @@ export default class HudScene extends Phaser.Scene {
             }
         });
 
-        // ---------- HP & Lives ----------
-        this.livesText.setText('Lives: ' + this.main.player.lives);
-
+        // ... hp - lives ...
+        this.lives = this.main.player.lives;
+        if(this.conLives && this.conLives.children) {
+            for (let i = 0; i < this.lives; i++) {
+                if(this.conLives.getChildren()[i]) this.conLives.getChildren()[i].setVisible(true);
+            }
+            for (let i = this.lives; i < this.maxLives; i++) {
+                if(this.conLives.getChildren()[i]) this.conLives.getChildren()[i].setTexture('background_heart');
+            }
+        }
+        
         const hpPercentage = Phaser.Math.Clamp(
-            this.main.player.hp / this.playerBaseHp, 
+            this.main.player.hp / this.playerBaseHp,
             0, 1
         );
 
-        this.hpFill.width = 160 * hpPercentage;
+        if(this.hpFill) this.hpFill.width = 160 * hpPercentage;
+        
     }
 
     drawSkillHUD() {
@@ -95,7 +119,7 @@ export default class HudScene extends Phaser.Scene {
             .setScale(1)
             .setDepth(0);
 
-        this.conSizer = this.rexUI.add.sizer({
+        this.conSkill = this.rexUI.add.sizer({
             x: width / 2,
             y: height * 0.9,
             orientation: 'x',
@@ -110,8 +134,8 @@ export default class HudScene extends Phaser.Scene {
 
             const bg = this.add.image(0, 0, 'key_ring')
                 .setDisplaySize(size, size);
-            
-            const keyBg = this.add.image(0, 0, 'key_ring') 
+
+            const keyBg = this.add.image(0, 0, 'key_ring')
                 .setDisplaySize(size * 0.5, size * 0.5)
                 .setDepth(1)
                 .setTint(0x888888);
@@ -123,10 +147,10 @@ export default class HudScene extends Phaser.Scene {
             }).setDepth(2);
 
             const icon = this.add.image(0, 0, iconKey)
-                .setDisplaySize(size * 0.85, size * 0.90)
+                .setDisplaySize(size * 0.80, size * 0.80)
                 .setOrigin(0.5)
                 .setName('skillIcon');
-                
+
             const iconText = this.add.text(0, 0, "", {
                 fontSize: `${size * 0.2}px`,
                 color: '#ffffff',
@@ -134,24 +158,25 @@ export default class HudScene extends Phaser.Scene {
             }).setOrigin(0.5).setDepth(2).setName('iconText');
 
             skillSizer.add(bg);
-            skillSizer.add(keyText, {expand: false,  align: 'center', padding: { top:  size / 2, bottom: 0, left: 0, right: size / 2} });
-            skillSizer.add(keyBg, {expand: false, align:  'center', padding: { top:  size / 2, bottom: 0, left: 0, right: size / 2} });
-            skillSizer.add(icon, {expand: false,  align: 'center' });
-            skillSizer.add(iconText, {expand: false,  align: 'center' });
+            skillSizer.add(keyText, { expand: false, align: 'center', padding: { top: size / 2, bottom: 0, left: 0, right: size / 2 } });
+            skillSizer.add(keyBg, { expand: false, align: 'center', padding: { top: size / 2, bottom: 0, left: 0, right: size / 2 } });
+            skillSizer.add(icon, { expand: false, align: 'center' });
+            skillSizer.add(iconText, { expand: false, align: 'center' });
 
             sizer.add(skillSizer, { expand: false, proportion: 0 });
         }
 
         const size = 90;
-        addSkill(this.conSizer, size, "Q", "skill_q");
-        addSkill(this.conSizer, size, "E", "skill_e");
-        addSkill(this.conSizer, size, "C", "skill_c");
-        this.conSizer.layout();
+        addSkill(this.conSkill, size, "Q", "skill_q");
+        addSkill(this.conSkill, size, "E", "skill_e");
+        addSkill(this.conSkill, size, "C", "skill_c");
+        this.conSkill.layout();
     }
 
     drawStatusPanel() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
+        this.maxLives = this.lives;
 
         this.statusBG = this.add.image(width * 0.15, height * 0.12, 'info_hud')
             .setOrigin(0.5)
@@ -164,20 +189,26 @@ export default class HudScene extends Phaser.Scene {
             orientation: 'x',
             space: { left: 90, right: 20, top: 15, bottom: 15, item: 20 }
         })
-        .setOrigin(0.5)
-        .setDepth(2);
+            .setOrigin(0.5)
+            .setDepth(2);
 
         const infoPanelSizer = this.rexUI.add.sizer({
             orientation: 'y',
             space: { item: 8 }
         });
 
-        this.livesText = this.add.text(0, 0, 'Lives: 3', {
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: '#000000ff'
+        this.conLives = this.rexUI.add.sizer({
+            width: 10,
+            height: 10,
+            orientation: 'x',
+            space: { item: 0 }
         });
-        infoPanelSizer.add(this.livesText, { align: 'left' });
+        for (let i = 0; i < this.maxLives; i++) {
+            const heartIcon = this.add.image(0, 0, 'heart')
+                .setDisplaySize(24, 24);
+            this.conLives.add(heartIcon);
+        }
+        infoPanelSizer.add(this.conLives, { align: 'left' });
 
 
         const hpBG = this.rexUI.add.roundRectangle(0, 0, 160, 20, 5, 0x444444);
@@ -202,9 +233,65 @@ export default class HudScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        this.abilityBarBG = this.add.image(width * 0.08, height * 0.45, 'ability_bar')
+        const abilitySize = 45;
+        const barWidth = 16;
+        const barHeight = this.maxBarHeight;
+
+        this.abilityBarImage = this.add.image(width * 0.08, height * 0.45, 'ability_bar')
             .setOrigin(0.5)
             .setScale(0.5)
             .setDepth(0);
+
+        this.conAbility = this.rexUI.add.sizer({
+            x: width * 0.052,
+            y: height * 0.47,
+            orientation: 'y',
+            space: { item: -5 }
+        }).setDepth(10);
+
+        const abilitySizer = this.rexUI.add.overlapSizer({
+            width: abilitySize,
+            height: abilitySize
+        });
+        const keyBg = this.add.image(0, 0, 'key_ring')
+            .setDisplaySize(abilitySize, abilitySize)
+            .setTint(0x888888)
+            .setDepth(20);
+        const keyText = this.add.text(0, 0, "B", {
+            fontSize: abilitySize * 0.7,
+            color: '#ffffff',
+            fontStyle: 'bold'
+        })
+        .setOrigin(0.5)
+        .setDepth(21);
+        
+        abilitySizer.add(keyBg);
+        abilitySizer.add(keyText, { align: "center" });
+
+        const expSizer = this.rexUI.add.overlapSizer({
+            width: barWidth,
+            height: barHeight
+        });
+        const expBG = this.rexUI.add.roundRectangle(
+            0, 0,
+            barWidth, barHeight,
+            5,
+            0x000000
+        ).setVisible(false);
+        this.expFill = this.rexUI.add.roundRectangle(
+            0, 0,
+            barWidth,
+            0, // this changes
+            5,
+            0x00ff00
+        ).setOrigin(0, 1);
+
+        expSizer.add(expBG, { expand: true }); 
+        expSizer.add(this.expFill, { expand: false, align: 'bottom' });
+
+        this.conAbility.add(abilitySizer, { expand: false });
+        this.conAbility.add(expSizer, { expand: false });
+
+        this.conAbility.layout();
     }
 }

@@ -10,7 +10,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.spawnPoint = { x, y };
 
         this.lives = 3;
-        if(this.type === 'archer'){
+        if(this.type === 'archer' || this.type === 'tower_archer'){
             this.hp = 7;
             this.damage = 4;
             this.speed = 4;
@@ -20,6 +20,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.weapon = scene.add.sprite(this.x, this.y, 'archer_weapon');
             this.weapon.setScale(0.8);
             this.weapon.setDepth(999);
+            this.weapon.depthOffset = 3000;
 
             this.arrowSize = 0.8;
             this.arrowSpeed = 15;
@@ -30,6 +31,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.walk = 'knight_walk';
             this.idle = 'knight_idle'
         }
+
+        if (this.type === 'tower_archer') {
+            this.depthOffset = 2000;
+        } else {
+            this.depthOffset = 0;
+        }
+
         this.lastDirection = 'right';
         this.isAttacking = false;
         this.isShooting = false;
@@ -52,8 +60,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.goliathCooldown = 15000;
 
         this.isBuilding = false;
-        this.canBuild = true;
-        this.buildExp = 0;
+        this.canBuild = false;
+        this.buildExp = 100;
         this.buildExpNeeded = 100;
 
         this.createBody(24, 48);
@@ -84,13 +92,15 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     createBody(collider, sensor) {
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
+        let isSensor = (this.type === 'tower_archer') ? true : false;
+        let sensorRadius = (this.type === 'tower_archer') ? sensor * 10 : sensor;
 
         this.playerCollider = Bodies.circle(this.x, this.y, collider, {
-            isSensor: false,
+            isSensor: isSensor,
             label: 'playerCollider'
         });
 
-        this.playerSensor = Bodies.circle(this.x, this.y, sensor, {
+        this.playerSensor = Bodies.circle(this.x, this.y, sensorRadius, {
             isSensor: true,
             label: 'playerSensor'
         });
@@ -113,12 +123,14 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         }
         this.handleMovement();
         this.handleAttack();
+        this.handleTowerArcherAttack();
         this.handleAnimation();
         this.handleSkillAttack();
+        this.handleAbility();
     }
 
     handleMovement() {
-        if (this.isDashing) return;
+        if (this.isDashing || this.type === 'tower_archer') return;
 
         const v = new Phaser.Math.Vector2();
 
@@ -148,7 +160,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     handleAnimation() {
         if (this.isAttacking) return;
-
+        if (this.type === 'tower_archer') {
+            this.anims.play(this.idle, true);
+            return;
+        }
         const moving =
             Math.abs(this.velocity.x) > 0.1 ||
             Math.abs(this.velocity.y) > 0.1;
@@ -170,21 +185,25 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     handleWeapon(){
         if (!this.weapon) return;
 
-        const pointer = this.scene.input.activePointer;
-        const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        if(this.type === 'archer'){
+            const pointer = this.scene.input.activePointer;
+            const worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
 
-        this.angle = Phaser.Math.Angle.Between(this.x, this.y, worldPoint.x, worldPoint.y);
-        if(worldPoint.x >= this.x){
-            this.weapon.setFlipY(false);
-            this.weapon.x = this.x + 8;
-            this.weapon.y = this.y;
-        }else{
-            this.weapon.setFlipY(true);
-            this.weapon.x = this.x - 8;
-            this.weapon.y = this.y;
+            this.angle = Phaser.Math.Angle.Between(this.x, this.y, worldPoint.x, worldPoint.y);
+            if(worldPoint.x >= this.x){
+                this.weapon.setFlipY(false);
+                this.weapon.x = this.x + 8;
+                this.weapon.y = this.y;
+            }else{
+                this.weapon.setFlipY(true);
+                this.weapon.x = this.x - 8;
+                this.weapon.y = this.y;
+            }
+
+            this.weapon.setRotation(this.angle);
+        }else if (this.type === 'tower_archer'){
+
         }
-
-        this.weapon.setRotation(this.angle);
     }
 
     handleDash() {
@@ -295,7 +314,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.setScale(this.goliath);
         this.createBody(72, 192);
         this.setFixedRotation();
-        console.log("Goliath Activated");
         if(this.type === 'archer'){
             this.weapon.setScale(this.goliath);
             this.arrowSize = this.goliath;
@@ -304,10 +322,18 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     }
 
     handleBuild(){
-        if (!this.canBuild || this.isBuilding) return;
+        if (!this.canBuild || this.isBuilding){ 
+            this.isBuilding = false; 
+            document.querySelector('canvas').style.cursor = "url('asset/img/Pointers/01.png'), auto";
+            return;
+        }
+
+        this.isBuilding = true;
+        document.querySelector('canvas').style.cursor = "url('asset/img/Pointers/02.png'), auto";
     }
 
     handleSkillAttack(){
+        if(this.type === 'tower_archer') return;
         if (this.inputKeys && Phaser.Input.Keyboard.JustDown(this.inputKeys.q)) {
             this.handleDash();
             return;
@@ -324,51 +350,59 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         
     }
 
+    handleAbility(){
+        if (this.buildExp >= this.buildExpNeeded) {
+            this.canBuild = true;
+        } else {
+            this.canBuild = false;
+        }
+    }
+
     handleAttack() {
         if (this.isAttacking || this.isDashing) return;
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.space)) {
-            if(this.type != "knight") return;
-            this.isAttacking = true;
-            this.speed = 2;
+        if (this.type == 'knight') {            
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.space)) {
+                if(this.type != "knight") return;
+                this.isAttacking = true;
+                this.speed = 2;
 
-            if(this.type === 'knight'){
-                if (this.lastDirection === 'left' || this.lastDirection === 'right') {
-                    this.anims.play('knight_attack_right', false);
-                } else if (this.lastDirection === 'up') {
-                    this.anims.play('knight_attack_up', false);
-                } else if (this.lastDirection === 'down') {
-                    this.anims.play('knight_attack_down', false);
-                }
-                this.scene.sound.play("sword_atk", {
-                    volume: 0.5
-                })
-            }
-
-            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.isAttacking = false;
-                this.speed = 3;
-                this.anims.play(this.idle, true);
-
-                const enemies = this.scene.enemies.filter(enemy => {
-                    let range = 60 * (this.isGoliath ? this.goliath + 1 : 1);
-                
-                    if (enemy.enemyType === 'boss_orc') {
-                        range += 100; 
+                if(this.type === 'knight'){
+                    if (this.lastDirection === 'left' || this.lastDirection === 'right') {
+                        this.anims.play('knight_attack_right', false);
+                    } else if (this.lastDirection === 'up') {
+                        this.anims.play('knight_attack_up', false);
+                    } else if (this.lastDirection === 'down') {
+                        this.anims.play('knight_attack_down', false);
                     }
+                    this.scene.sound.play("sword_atk", {
+                        volume: 0.5
+                    })
+                }
 
-                    const distance = Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y);
-                    return distance <= range; 
+                this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                    this.isAttacking = false;
+                    this.speed = 3;
+                    this.anims.play(this.idle, true);
+
+                    const enemies = this.scene.enemies.filter(enemy => {
+                        let range = 60 * (this.isGoliath ? this.goliath + 1 : 1);
+                    
+                        if (enemy.enemyType === 'boss_orc') {
+                            range += 100; 
+                        }
+
+                        const distance = Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y);
+                        return distance <= range; 
+                    });
+
+                    enemies.forEach(enemy => {
+                        enemy.takeDamage(this.damage);
+                    });
+
                 });
-
-                enemies.forEach(enemy => {
-                    enemy.takeDamage(this.damage);
-                });
-
-            });
-        }
-
-        if (this.type === 'archer') {
+            }
+        } else if (this.type === 'archer') {
             this.scene.input.on('pointerdown', (pointer) => {
                 if (pointer.leftButtonDown()) this.isShooting = true;
             });
@@ -380,8 +414,40 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     }
 
+    handleTowerArcherAttack(){
+        if (this.type !== 'tower_archer' || this.isAttacking) return;
+        if (!this.scene.enemies || !this.scene.active) {
+            return;
+        }
+        const enemiesInRange = this.scene.enemies.filter(enemy => {
+            const distance = Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y);
+            return distance <= this.playerSensor.circleRadius; 
+        });
+
+        if (enemiesInRange.length > 0) {
+            this.isShooting = true;
+            this.targetEnemy = enemiesInRange[0];
+            this.angle = Phaser.Math.Angle.Between(this.x, this.y, this.targetEnemy.x, this.targetEnemy.y);
+            this.weapon.setRotation(this.angle);
+            if (this.targetEnemy.x >= this.x) {
+                this.weapon.setFlipY(false);
+                this.weapon.x = this.x + 8;
+            } else {
+                 this.weapon.setFlipY(true);
+                 this.weapon.x = this.x - 8;
+            }
+            this.weapon.y = this.y;
+
+            this.shootArrow();
+        } else {
+            this.targetEnemy = null;
+            this.isShooting = false;
+        }
+    }
+
     shootArrow() {
         if (this.isAttacking) return;
+        if(this.isBuilding) return;
 
         this.isAttacking = true;
         this.speed = 2;
@@ -396,7 +462,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.speed = 4;
             this.handleArrowTravel();
 
-            // Optional: small delay between shots
             this.scene.time.delayedCall(100, () => {
                 if (this.isShooting) this.shootArrow();
             });
@@ -450,7 +515,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
          if (this.isDashing) return;
 
         this.hp -= amount;
-        console.log("Player HP:", this.hp);
         if(!this.isAttackSpeeding) {
             this.setTint(0xff0000);
             this.scene.time.delayedCall(200, () => {
@@ -462,7 +526,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.lives -= 1;
             this.hp = 10;
             this.setPosition(this.spawnPoint.x, this.spawnPoint.y);
-            console.log("Player Lives:", this.lives);
         }
         if (this.lives <= 0) {
             console.log("Game Over");

@@ -85,10 +85,22 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('bg', 'asset/img/menu_bg.jpg')
         this.load.image('as_archer', 'asset/img/play_as_archer.png')
         this.load.image('as_knight', 'asset/img/play_as_knight.png')
+
+        // Hud assets
+        this.load.image('info_hud', 'asset/img/info_hud.png');
+        this.load.image('skill_hud', 'asset/img/skill_hud.png');
+        this.load.image('key_ring', 'asset/img/key_ring.png');
+        this.load.image('skill_q', 'asset/img/dash.png');
+        this.load.image('skill_e', 'asset/img/attack_speed.png');
+        this.load.image('skill_c', 'asset/img/goliath.png');
+        this.load.image('ability_bar', 'asset/img/ability_bar.png');
+        this.load.image('ready_ability_bar', 'asset/img/ready_ability_bar.png');
+        this.load.image('background_heart', 'asset/img/heart/background.png');
+        this.load.image('heart', 'asset/img/heart/heart.png');
     }
 
     create() {
         console.log("All assets preloaded!")
-        this.scene.start('MenuScene');
+        this.scene.start('MainScene');
     }
 }

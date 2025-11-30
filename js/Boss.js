@@ -187,6 +187,7 @@ export default class Boss extends Phaser.Physics.Matter.Sprite {
             this.scene.sound.play("orc_death", {
                 volume: 0.5
             })
+            this.scene.player.buildExp += 20;
             this.anims.play('enemy_death', false);
             
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -196,6 +197,7 @@ export default class Boss extends Phaser.Physics.Matter.Sprite {
             return;
         }
     }
+
     get velocity() {
         return this.body ? this.body.velocity : { x: 0, y: 0 };
     }
