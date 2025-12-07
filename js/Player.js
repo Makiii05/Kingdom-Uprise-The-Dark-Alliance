@@ -160,6 +160,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     handleAnimation() {
         if (this.isAttacking) return;
+        if(!this.scene) return;
         if (this.type === 'tower_archer') {
             this.anims.play(this.idle, true);
             return;
@@ -416,7 +417,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
 
     handleTowerArcherAttack(){
         if (this.type !== 'tower_archer' || this.isAttacking) return;
-        if (!this.scene.enemies || !this.scene.active) {
+        if (!this.scene || !this.scene.enemies || !Array.isArray(this.scene.enemies)) {
             return;
         }
         const enemiesInRange = this.scene.enemies.filter(enemy => {
