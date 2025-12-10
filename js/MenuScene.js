@@ -90,19 +90,8 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     showInstructions() {
-        this.clearPage();
-
-        const bg = this.add.image(this.centerX, this.centerY, 'select_bg')
-            .setOrigin(0.5).setScale(.5).setScrollFactor(0).setTint(0X777777);
-        
-        const back_button = this.add.image(120, 70, 'back')
-            .setInteractive({ useHandCursor: false }).setScale(0.5).setOrigin(0.5);
-
-
-        back_button.on('pointerdown', () => {
-            this.showMainMenu();
-        });
-        this.currentObjects.push(bg, back_button);
+        this.menu_sound.stop();
+        this.scene.start('InstructionsScene');
     }
 
     state(action, target, attackAnim = null, idleAnim = null) {
@@ -166,7 +155,7 @@ export default class MenuScene extends Phaser.Scene {
 
     startGame(characterType) {
         this.menu_sound.stop();
-        this.scene.start('MainScene', { playerType: characterType });
+        this.scene.start('StoryScene', { playerType: characterType });
     }
 
     handleAnimation() {

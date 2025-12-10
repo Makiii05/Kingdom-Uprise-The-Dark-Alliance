@@ -123,6 +123,17 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('restart_btn', 'asset/img/overlay/restart_btn.png');
         this.load.image('resume_btn', 'asset/img/overlay/resume_btn.png');
         this.load.image('you_won', 'asset/img/overlay/you_won.png');
+
+        // Story
+        this.load.image('110', 'asset/img/story/110.png')
+        this.load.image('120', 'asset/img/story/120.png')
+        this.load.image('130', 'asset/img/story/130.png')
+        this.load.image('140', 'asset/img/story/140.png')
+        this.load.image('210', 'asset/img/story/210.png')
+        this.load.image('220', 'asset/img/story/220.png')
+        this.load.image('231', 'asset/img/story/231.png')
+        this.load.image('232', 'asset/img/story/232.png')
+        this.load.image('skip', 'asset/img/story/skip.png')
     }
 
     create() {

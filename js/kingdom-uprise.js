@@ -3,6 +3,8 @@ import MainScene from "./MainScene.js";
 import MenuScene from "./MenuScene.js";
 import OverlayScene from "./OverlayScene.js";
 import PreloaderScene from "./PreloaderScene.js";
+import InstructionsScene from "./InstructionsScene.js";
+import StoryScene from "./StoryScene.js";
 
 const config = {
     width: 1280,
@@ -18,7 +20,7 @@ const config = {
         zoom: 1,
     },
 
-    scene: [PreloaderScene, MenuScene, MainScene, HudScene, OverlayScene],
+    scene: [PreloaderScene, MenuScene, InstructionsScene, StoryScene, MainScene, HudScene, OverlayScene],
     // scene: [PreloaderScene, MainScene, OverlayScene, HudScene],
 
     physics: {
