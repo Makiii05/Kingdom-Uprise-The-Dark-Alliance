@@ -6,7 +6,7 @@ import PreloaderScene from "./PreloaderScene.js";
 const config = {
     width: 1280,
     height: 720,
-    backgroundColor: '#999999',
+    backgroundColor: '#0a0909',
     type: Phaser.AUTO,
     parent: 'game-con',
 
@@ -17,8 +17,7 @@ const config = {
         zoom: 1,
     },
 
-    // scene: [PreloaderScene, MenuScene, MainScene, HudScene],
-    scene: [PreloaderScene, MainScene, HudScene],
+    scene: [PreloaderScene, MenuScene, MainScene, HudScene],
 
     physics: {
         default: 'matter',

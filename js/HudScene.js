@@ -5,16 +5,6 @@ export default class HudScene extends Phaser.Scene {
 
     preload() {
         this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
-        this.load.image('info_hud', 'asset/img/info_hud.png');
-        this.load.image('skill_hud', 'asset/img/skill_hud.png');
-        this.load.image('key_ring', 'asset/img/key_ring.png');
-        this.load.image('skill_q', 'asset/img/dash.png');
-        this.load.image('skill_e', 'asset/img/attack_speed.png');
-        this.load.image('skill_c', 'asset/img/goliath.png');
-        this.load.image('ability_bar', 'asset/img/ability_bar.png');
-        this.load.image('ready_ability_bar', 'asset/img/ready_ability_bar.png');
-        this.load.image('background_heart', 'asset/img/heart/background.png');
-        this.load.image('heart', 'asset/img/heart/heart.png');
     }
 
     create() {
@@ -29,9 +19,13 @@ export default class HudScene extends Phaser.Scene {
         this.lives = this.main.player.lives
         this.maxLives = this.lives;
 
+        this.enemiesLeft = this.main.enemies.length;
+        this.waveNumber = this.main.waveNumber;
+
         this.drawSkillHUD();
         this.drawAbilityBar();
         this.drawStatusPanel();
+        this.drawEnemyhud()
 
         this.portraitIcon = "archer_idle"
         if (this.main.player.type === 'archer') {
@@ -107,7 +101,42 @@ export default class HudScene extends Phaser.Scene {
         );
 
         if(this.hpFill) this.hpFill.width = 160 * hpPercentage;
-        
+
+        // ... enemy hud ...
+        this.enemiesLeft = this.main.enemies.length;
+        this.enemyText.setText(`${this.enemiesLeft}`);
+        this.waveNumber = this.main.waveNumber;
+        this.waveText.setText(`${this.waveNumber}`);
+    }
+
+    drawEnemyhud(){
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        this.enemyHud = this.add.image(width, 0, 'enemy_hud')
+            .setOrigin(1, 0)
+            .setScale(0.5)
+            .setDepth(0);
+        this.enemyText = this.add.text(this.enemyHud.x - 98, this.enemyHud.y + 105, ``, {
+            fontSize: '24px',
+            color: '#f5c800ff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        this.waveText = this.add.text(this.enemyHud.x - 98, this.enemyHud.y + 225, ``, {
+            fontSize: '24px',
+            color: '#f5c800ff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        this.settingBtn = this.add.image(width - 55, 350, 'settings_btn')
+            .setOrigin(0.5)
+            .setScale(0.15)
+            .setDepth(1)
+            .setInteractive({ pixelPerfect: true })
+            .on('pointerdown', () => {
+                this.main.scene.pause();
+                this.scene.pause();
+                this.scene.launch('OverlayScene', { from: 'HudScene', open: "settings" });
+            });
     }
 
     drawSkillHUD() {
@@ -281,7 +310,7 @@ export default class HudScene extends Phaser.Scene {
         this.expFill = this.rexUI.add.roundRectangle(
             0, 0,
             barWidth,
-            0, // this changes
+            0,
             5,
             0x00ff00
         ).setOrigin(0, 1);

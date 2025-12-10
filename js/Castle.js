@@ -8,20 +8,15 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
 
         this.spawnPoint = { x, y };
 
-        this.maxHp = 5;
+        this.maxHp = 50;
         this.hp = this.maxHp;
 
-        this.createBody(this.width, this.height); // width, height for collision
+        this.createBody(this.width, this.height); 
         this.setFixedRotation();
         this.setScale(1.1);
 
-        // Track enemies that are currently attacking
         this.attackingEnemies = new Set();
-
-        // Create health bar
         this.createHealthBar();
-
-        // Setup collision detection
         this.setupCollisions();
     }
 
@@ -32,14 +27,12 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
     createBody(width, height) {
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
 
-        // Main collision body
         this.castleCollider = Bodies.rectangle(this.x, this.y, width, height, {
             isSensor: false,
             label: 'castleCollider',
-            isStatic: true // Castle doesn't move
+            isStatic: true  
         });
 
-        // Larger sensor to detect nearby enemies
         this.castleSensor = Bodies.rectangle(this.x, this.y, width, height, {
             isSensor: true,
             label: 'castleSensor'
@@ -58,7 +51,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
         const barHeight = 8;
         const offsetY = -120;
 
-        // Background (red)
         this.healthBarBg = this.scene.add.rectangle(
             this.x, 
             this.y + offsetY, 
@@ -68,7 +60,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
         );
         this.healthBarBg.setDepth(9999);
 
-        // Foreground (green)
         this.healthBarFill = this.scene.add.rectangle(
             this.x, 
             this.y + offsetY, 
@@ -80,7 +71,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
         this.healthBarFill.setOrigin(0, 0.5);
         this.healthBarFill.x = this.x - barWidth / 2;
 
-        // Border
         this.healthBarBorder = this.scene.add.rectangle(
             this.x, 
             this.y + offsetY, 
@@ -93,20 +83,16 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
     }
 
     setupCollisions() {
-        // Listen for collision events
         this.scene.matter.world.on('collisionstart', (event) => {
             event.pairs.forEach((pair) => {
                 const { bodyA, bodyB } = pair;
 
-                // Check if castle sensor collided with an enemy
                 if (bodyA.label === 'castleSensor' || bodyB.label === 'castleSensor') {
                     const enemyBody = bodyA.label === 'castleSensor' ? bodyB : bodyA;
                     
-                    // Check if it's an enemy sensor
                     if (enemyBody.label === 'enemySensor') {
                         const enemy = enemyBody.gameObject?.parent;
                         if (enemy && enemy.scene) {
-                            // Mark this enemy as attacking the castle
                             this.attackingEnemies.add(enemy);
                             enemy.isAttackingCastle = true;
                         }
@@ -115,7 +101,6 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
             });
         });
 
-        // Listen for collision end
         this.scene.matter.world.on('collisionend', (event) => {
             event.pairs.forEach((pair) => {
                 const { bodyA, bodyB } = pair;
@@ -144,13 +129,12 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
             const healthPercent = Math.max(0, this.hp / this.maxHp);
             this.healthBarFill.width = this.width * healthPercent;
 
-            // Change color based on health
             if (healthPercent > 0.6) {
-                this.healthBarFill.setFillStyle(0x00ff00); // Green
+                this.healthBarFill.setFillStyle(0x00ff00); 
             } else if (healthPercent > 0.3) {
-                this.healthBarFill.setFillStyle(0xffff00); // Yellow
+                this.healthBarFill.setFillStyle(0xffff00);
             } else {
-                this.healthBarFill.setFillStyle(0xff0000); // Red
+                this.healthBarFill.setFillStyle(0xff0000);
             }
         }
     }
@@ -158,13 +142,11 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
     takeDamage(amount) {
         this.hp -= amount;
         
-        // Visual feedback
         this.setTint(0xff0000);
         this.scene.time.delayedCall(200, () => {
             this.clearTint();
         });
 
-        // Update health bar
         this.updateHealthBar();
 
         if (this.hp <= 0) {

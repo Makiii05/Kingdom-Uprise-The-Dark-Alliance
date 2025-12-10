@@ -8,6 +8,9 @@ export default class MainScene extends Phaser.Scene {
     constructor(){
         super("MainScene")
     }
+    init(data) {
+        this.playerType = data.playerType;
+    }
 
     create() {
         this.scene.launch('HudScene'); 
@@ -16,6 +19,7 @@ export default class MainScene extends Phaser.Scene {
         this.spawnPlayer()
         this.spawnCastle()
         this.spawnEnemy();
+        this.spawnCave()
         this.createTower(155, 325);
         this.createTower(350, 80);
         this.createTower(925, 80);
@@ -47,10 +51,11 @@ export default class MainScene extends Phaser.Scene {
         const tree = map.addTilesetImage('Tree', 'Tree')
         const sheep = map.addTilesetImage('HappySheep_All', 'HappySheep_All')
         const towerC = map.addTilesetImage('Tower_Construction', 'Tower_Construction')
+        const bossChamber = map.addTilesetImage('boss_chamber', 'boss_chamber')
 
         const allTilesets = [
             bridge, castle, foam, grass, ground, rocks1, rocks2, rocks3, rocks4,
-            shadows, water, house, tower, destroyed, tree, sheep, towerC
+            shadows, water, house, tower, destroyed, tree, sheep, towerC, bossChamber
         ]
 
         const animatedTileLayer = {
@@ -72,7 +77,6 @@ export default class MainScene extends Phaser.Scene {
             if (layer) {
                 layer.setScale(scale)
                 
-                // Handle animated tiles for this layer
                 if(animatedTileLayer[layerName]){
                     this.setupTileAnimation(map, layer);
                 }
@@ -87,12 +91,8 @@ export default class MainScene extends Phaser.Scene {
     }
 
     setupTileAnimation(map, layer) {
-        // Get animated tiles from the map data
         const animatedTiles = [];
-        
-        // Loop through all tilesets to find animation data
         map.tilesets.forEach(tileset => {
-            // Access the tiles array from the tileset
             if (tileset.tileData) {
                 Object.keys(tileset.tileData).forEach(tileId => {
                     const tileData = tileset.tileData[tileId];
@@ -108,15 +108,11 @@ export default class MainScene extends Phaser.Scene {
             }
         });
 
-        // Create time-based animation system
         if (animatedTiles.length > 0) {
-            // Store animation state for each tile position
             const tileAnimations = new Map();
             
-            // Find all tiles in the layer that have animations
             layer.forEachTile(tile => {
                 if (tile.index !== -1) {
-                    // Find animation data for this tile
                     const animData = animatedTiles.find(at => at.gid === tile.index);
                     if (animData) {
                         const key = `${tile.x}_${tile.y}`;
@@ -131,7 +127,6 @@ export default class MainScene extends Phaser.Scene {
                 }
             });
 
-            // Store animation states for update loop
             if (tileAnimations.size > 0) {
                 if (!this.tileAnimationStates) {
                     this.tileAnimationStates = [];
@@ -145,7 +140,7 @@ export default class MainScene extends Phaser.Scene {
         if (this.playerType === 'knight') {
             this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_knight', frame:'idle_0', type: 'knight'})
         } else {
-            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_archer', frame:'idle_0', type: 'archer'})
+            this.player = new Player({scene:this, x:this.cameras.main.centerX , y:this.cameras.main.centerY + 20, texture:'blue_archer', frame:'idle_0', type: 'archer'})
         }
 
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -207,36 +202,84 @@ export default class MainScene extends Phaser.Scene {
             { x: 2026, y: 790 }, { x: 1943, y: 806 }, { x: 1919, y: 681 }, { x: 2000, y: 855 }, { x: 1976, y: 954 }, { x: 1839, y: 948 }, 
             { x: 1758, y: 1037 }, { x: 1830, y: 1067 }, { x: 1592, y: 1017 }, { x: 1508, y: 951 }, { x: 1419, y: 912 }
         ]
-        this.enemytotal = 5;
-        this.waveNumber = 1; 
-        this.enemySpawned = 0;
-        this.enemyLeft = this.enemytotal; 
-        this.waveInterval = 5000;
+        
+        this.waveNumber = 1;
+        this.enemyTotal = 5;
+        this.isSpawning = false;
         this.bossSpawned = false;
+        this.gameOver = false;
+        this.spawnIntervalTime = 1000;
+        this.finalWave = 1;
+        this.finalWaveBosses = 10;
+        this.finalWaveEnemies = 50;
+        
+        this.startWave();
+    }
 
-        setInterval(() => {
-            if(this.enemyLeft > 0 && this.enemySpawned < 50){ 
-                for (let i = 0; i < this.enemytotal / this.waveNumber; i++) {
-                    if (this.enemyLeft <= 0) break;
-
-                    const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
-                    const enemyType = Phaser.Utils.Array.GetRandom(this.enemyType);
-                    const enemy = new Enemy({scene:this, x: spawnPoint.x, y: spawnPoint.y, texture: enemyType.texture, frame: enemyType.frame, target: enemyType.target, type: enemyType.type});
-                    this.enemies.push(enemy);  
-                    
-                    this.enemyLeft--;
-                    this.enemySpawned++;
+    startWave() {
+        if (this.waveNumber > this.finalWave) {
+            if(this.playerType === 'knight'){
+                console.log("Wave > 5: Final Round - Spawning many enemies");
+                this.enemyTotal = this.finalWaveEnemies;
+                this.spawnIntervalTime = 10;
+            } else {
+                console.log("Wave > 5: Final Round - Spawning 10 Bosses");
+                for (let i = 0; i < this.finalWaveBosses; i++) {
+                    this.spawnBoss();
                 }
+                return;
             }
-            else if (this.enemyLeft <= 0 && !this.bossSpawned && this.enemies.length === 0) {                
-                const boss = new Boss({scene:this, x: 2000, y: 1000, texture: 'boss_orc', frame: 'tile000', target: this.player, type: 'boss_orc'});
-                this.enemies.push(boss);
-                this.bossSpawned = true; 
-            }
-            if(this.enemies.length <= 0 && this.enemyLeft <= 0){
-                this.startNextWave()
-            }
-        }, this.waveInterval);
+        }
+
+        const enemiesToSpawn = this.waveNumber * this.enemyTotal;
+        console.log(`Starting Wave ${this.waveNumber}: Spawning ${enemiesToSpawn} enemies`);
+        
+        this.isSpawning = true;
+        this.enemiesInWave = enemiesToSpawn;
+        this.spawnedCount = 0;
+        
+        this.spawnWaveEnemies();
+    }
+
+    spawnWaveEnemies() {
+        if (this.spawnedCount < this.enemiesInWave) {
+            const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
+            const enemyType = Phaser.Utils.Array.GetRandom(this.enemyType);
+            const enemy = new Enemy({
+                scene: this, 
+                x: spawnPoint.x, 
+                y: spawnPoint.y, 
+                texture: enemyType.texture, 
+                frame: enemyType.frame, 
+                target: enemyType.target, 
+                type: enemyType.type
+            });
+            this.enemies.push(enemy);
+            this.spawnedCount++;
+            
+            this.time.delayedCall(this.spawnIntervalTime, () => {
+                this.spawnWaveEnemies();
+            });
+        } else {
+            this.isSpawning = false;
+            this.bossSpawned = false;
+        }
+    }
+
+    spawnBoss() {
+        console.log(`Spawning Boss for Wave ${this.waveNumber}`);
+            const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
+        const boss = new Boss({
+            scene: this, 
+            x: spawnPoint.x, 
+            y: spawnPoint.y, 
+            texture: 'boss_orc', 
+            frame: 'tile000', 
+            target: this.player, 
+            type: 'boss_orc'
+        });
+        this.enemies.push(boss);
+        this.bossSpawned = true;
     }
 
     createTower(x, y) {
@@ -246,6 +289,20 @@ export default class MainScene extends Phaser.Scene {
             this.tower_archers = []
         }
         this.towers.push(newTower);
+    }
+
+    spawnCave() {
+        this.cave = this.matter.add.rectangle(5760, 1550, 200, 200, { isSensor: false, isStatic: true })
+        this.matter.world.on('collisionstart', (event) => {
+        event.pairs.forEach((pair) => {
+            const { bodyA, bodyB } = pair;
+
+            if ((bodyA === this.cave && bodyB.label === 'playerCollider') ||
+                (bodyB === this.cave && bodyA.label === 'playerCollider')) {
+                this.player.setPosition(7750, 1200);
+            }
+        });
+    });
     }
 
     handleAnimation (){
@@ -271,10 +328,9 @@ export default class MainScene extends Phaser.Scene {
         console.log("Wave Complete! Starting next wave...");
         
         this.waveNumber++;
-        this.enemytotal += 5; 
-        this.enemyLeft = this.enemytotal;
-        this.enemySpawned = 0;
-        this.bossSpawned = false;
+        
+        console.log(`Moving to Wave ${this.waveNumber}`);
+        this.startWave();
     }
     
     update(time, delta){
@@ -294,6 +350,20 @@ export default class MainScene extends Phaser.Scene {
                 child.setDepth(child.y + (child.depthOffset || 0));
             }
         });
+
+        if (!this.isSpawning && !this.gameOver && this.enemies.length === 0) {
+            if (this.bossSpawned) {
+                if (this.waveNumber > this.finalWave) {
+                    console.log("Game Over - All waves completed!");
+                    this.gameOver = true;
+                    // this.scene.pause();
+                } else {
+                    this.startNextWave();
+                }
+            } else if (!this.bossSpawned && this.spawnedCount > 0) {
+                this.spawnBoss();
+            }
+        }
 
         if (this.tileAnimationStates) {
             this.tileAnimationStates.forEach(state => {

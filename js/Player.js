@@ -478,14 +478,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         const arrow = this.scene.matter.add.sprite(spawnX, spawnY, 'arrow');
 
         arrow.setScale(this.arrowSize);
-        
-        arrow.setBody({
-            type: 'rectangle',
-            width: 32,
-            height: 8,
-        });
+        arrow.setBody({ type: 'rectangle', width: 32, height: 8});
         arrow.setSensor(true);
-        
         arrow.damage = this.damage;
 
         arrow.setOnCollide((data) => {
