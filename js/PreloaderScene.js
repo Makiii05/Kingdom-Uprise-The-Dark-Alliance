@@ -69,6 +69,7 @@ export default class PreloaderScene extends Phaser.Scene {
         // Animation
         this.load.spritesheet('archer_weapon_anim', 'asset/img/blue/archer_weapon_anim.png', { frameWidth: 192, frameHeight: 192 });
         this.load.spritesheet('dead', 'asset/img/Dead.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('princess_anim', 'asset/img/princess.png', { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('menu_archer_attack', 'asset/img/menu/archer_attack.png', { frameWidth: 192, frameHeight: 192 });
         this.load.spritesheet('menu_knight_attack', 'asset/img/menu/knight_attack.png', { frameWidth: 192, frameHeight: 192 });
         this.load.spritesheet('menu_archer_idle', 'asset/img/menu/archer_idle.png', { frameWidth: 192, frameHeight: 192 });
@@ -109,6 +110,19 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('skill_hud', 'asset/img/hud/skill_hud.png');
         this.load.image('background_heart', 'asset/img/heart/background.png');
         this.load.image('heart', 'asset/img/heart/heart.png');
+
+        // Overlay Scene
+        this.load.image('overlay_bg', 'asset/img/overlay/bg.png');
+        this.load.image('final_round', 'asset/img/overlay/final_round.png');
+        this.load.image('game_over', 'asset/img/overlay/game_over.png');
+        this.load.image('new_wave_start', 'asset/img/overlay/new_wave_start.png');
+        this.load.image('orc_boss_spawn', 'asset/img/overlay/orc_boss_spawn.png');
+        this.load.image('pause', 'asset/img/overlay/pause.png');
+        this.load.image('play_again_btn', 'asset/img/overlay/play_again_btn.png');
+        this.load.image('quit_btn', 'asset/img/overlay/quit_btn.png');
+        this.load.image('restart_btn', 'asset/img/overlay/restart_btn.png');
+        this.load.image('resume_btn', 'asset/img/overlay/resume_btn.png');
+        this.load.image('you_won', 'asset/img/overlay/you_won.png');
     }
 
     create() {

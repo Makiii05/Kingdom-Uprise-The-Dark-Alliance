@@ -135,7 +135,8 @@ export default class HudScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 this.main.scene.pause();
                 this.scene.pause();
-                this.scene.launch('OverlayScene', { from: 'HudScene', open: "settings" });
+                this.scene.stop('OverlayScene');
+                this.scene.launch('OverlayScene', { from: 'HudScene', open: "pause" });
             });
     }
 

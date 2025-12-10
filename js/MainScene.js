@@ -8,6 +8,7 @@ export default class MainScene extends Phaser.Scene {
     constructor(){
         super("MainScene")
     }
+
     init(data) {
         this.playerType = data.playerType;
     }
@@ -15,6 +16,7 @@ export default class MainScene extends Phaser.Scene {
     create() {
         this.scene.launch('HudScene'); 
         this.scene.bringToTop('HudScene');
+        this.handleAnimation()
         this.drawTileMap()
         this.spawnPlayer()
         this.spawnCastle()
@@ -24,7 +26,6 @@ export default class MainScene extends Phaser.Scene {
         this.createTower(350, 80);
         this.createTower(925, 80);
         this.createTower(1180, 200);
-        this.handleAnimation()
         this.main_sound = this.sound.add("in_game_sound", {
             loop: true
         })
@@ -140,7 +141,7 @@ export default class MainScene extends Phaser.Scene {
         if (this.playerType === 'knight') {
             this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_knight', frame:'idle_0', type: 'knight'})
         } else {
-            this.player = new Player({scene:this, x:this.cameras.main.centerX , y:this.cameras.main.centerY + 20, texture:'blue_archer', frame:'idle_0', type: 'archer'})
+            this.player = new Player({scene:this, x:this.cameras.main.centerX, y:this.cameras.main.centerY + 20, texture:'blue_archer', frame:'idle_0', type: 'archer'})
         }
 
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -204,14 +205,14 @@ export default class MainScene extends Phaser.Scene {
         ]
         
         this.waveNumber = 1;
-        this.enemyTotal = 5;
+        this.enemyTotal = 10;
         this.isSpawning = false;
         this.bossSpawned = false;
         this.gameOver = false;
         this.spawnIntervalTime = 1000;
-        this.finalWave = 1;
+        this.finalWave = 10;
         this.finalWaveBosses = 10;
-        this.finalWaveEnemies = 50;
+        this.finalWaveEnemies = 20;
         
         this.startWave();
     }
@@ -220,10 +221,14 @@ export default class MainScene extends Phaser.Scene {
         if (this.waveNumber > this.finalWave) {
             if(this.playerType === 'knight'){
                 console.log("Wave > 5: Final Round - Spawning many enemies");
+                this.scene.stop('OverlayScene');
+                this.scene.launch('OverlayScene', { from: 'MainScene', open: "finalRound" });
                 this.enemyTotal = this.finalWaveEnemies;
                 this.spawnIntervalTime = 10;
             } else {
                 console.log("Wave > 5: Final Round - Spawning 10 Bosses");
+                this.scene.stop('OverlayScene');
+                this.scene.launch('OverlayScene', { from: 'MainScene', open: "finalRound" });
                 for (let i = 0; i < this.finalWaveBosses; i++) {
                     this.spawnBoss();
                 }
@@ -232,6 +237,8 @@ export default class MainScene extends Phaser.Scene {
         }
 
         const enemiesToSpawn = this.waveNumber * this.enemyTotal;
+        this.scene.stop('OverlayScene');
+        this.scene.launch('OverlayScene', { from: 'MainScene', open: "newWave" });
         console.log(`Starting Wave ${this.waveNumber}: Spawning ${enemiesToSpawn} enemies`);
         
         this.isSpawning = true;
@@ -268,7 +275,7 @@ export default class MainScene extends Phaser.Scene {
 
     spawnBoss() {
         console.log(`Spawning Boss for Wave ${this.waveNumber}`);
-            const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
+        const spawnPoint = Phaser.Utils.Array.GetRandom(this.spawnPoints);
         const boss = new Boss({
             scene: this, 
             x: spawnPoint.x, 
@@ -292,17 +299,40 @@ export default class MainScene extends Phaser.Scene {
     }
 
     spawnCave() {
-        this.cave = this.matter.add.rectangle(5760, 1550, 200, 200, { isSensor: false, isStatic: true })
-        this.matter.world.on('collisionstart', (event) => {
-        event.pairs.forEach((pair) => {
-            const { bodyA, bodyB } = pair;
-
-            if ((bodyA === this.cave && bodyB.label === 'playerCollider') ||
-                (bodyB === this.cave && bodyA.label === 'playerCollider')) {
-                this.player.setPosition(7750, 1200);
-            }
+        // Cave body
+        this.cave = this.matter.add.rectangle(5760, 1550, 200, 200, {
+            isSensor: false,
+            isStatic: true
         });
-    });
+
+        // Princess sprite with Matter body
+        this.princess = this.matter.add.sprite(8730, -700, 'princess_anim')
+            .setBody({ type: 'rectangle', width: 32, height: 66 })
+            .setSensor(false)
+            .setStatic(true);
+
+        // Make sure the BODY has the label
+        this.princess.body.label = "princess";
+
+        this.princess.anims.play('princess_idle').setScale(0.8);
+
+        // Collision detection
+        this.matter.world.on('collisionstart', (event) => {
+            event.pairs.forEach((pair) => {
+                const { bodyA, bodyB } = pair;
+
+                if ((bodyA === this.cave && bodyB.label === 'playerCollider') ||
+                    (bodyB === this.cave && bodyA.label === 'playerCollider')) {
+                    this.player.setPosition(7750, 1200);
+                }else 
+                if ((bodyA.label === "princess" && bodyB.label === 'playerCollider') ||
+                        (bodyB.label === "princess" && bodyA.label === 'playerCollider')) {
+                    this.scene.pause();
+                    this.scene.stop('OverlayScene');
+                    this.scene.launch('OverlayScene', { from: 'MainScene', open: "youWon" });
+                }
+            });
+        });
     }
 
     handleAnimation (){
@@ -322,6 +352,14 @@ export default class MainScene extends Phaser.Scene {
                 repeat: 0
             });
         }
+        if(!this.anims.exists('princess_idle')){
+            this.anims.create({
+                key: 'princess_idle',
+                frames: this.anims.generateFrameNumbers('princess_anim', { start: 0, end: 11 }),
+                frameRate: 6,
+                repeat: -1
+            });
+        }
     }
 
     startNextWave() {
@@ -332,6 +370,38 @@ export default class MainScene extends Phaser.Scene {
         console.log(`Moving to Wave ${this.waveNumber}`);
         this.startWave();
     }
+
+    displayGameClearedMessage() {
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY - 200;
+
+        const message = this.add.text(
+            centerX,
+            centerY,
+            "All waves cleared, hurry and\nsave the princess in the barren island!",
+            {
+                font: 'bold 32px Arial',
+                fill: '#FFD700',
+                align: 'center',
+                stroke: '#000000',
+                strokeThickness: 4,
+                wordWrap: { width: 600 }
+            }
+        );
+        message.setOrigin(0.5, 0.5);
+        message.setDepth(99999);
+        message.setScrollFactor(0);
+
+        // Optional: fade out the message after 5 seconds
+        this.tweens.add({
+            targets: message,
+            alpha: 0,
+            duration: 1000,
+            delay: 4000,
+            ease: 'Linear'
+        });
+    }
+    
     
     update(time, delta){
         this.player.update()
@@ -356,11 +426,14 @@ export default class MainScene extends Phaser.Scene {
                 if (this.waveNumber > this.finalWave) {
                     console.log("Game Over - All waves completed!");
                     this.gameOver = true;
+                    this.displayGameClearedMessage();
                     // this.scene.pause();
                 } else {
                     this.startNextWave();
                 }
             } else if (!this.bossSpawned && this.spawnedCount > 0) {
+                this.scene.stop('OverlayScene');
+                this.scene.launch('OverlayScene', { from: 'MainScene', open: "newWave" });
                 this.spawnBoss();
             }
         }

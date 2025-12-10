@@ -45,19 +45,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.canDash = true;
         this.dashSpeed = 100;
         this.dashDuration = 300; 
-        this.dashCooldown = 1000; 
+        this.dashCooldown = 2000; 
 
         this.isAttackSpeeding = false;
         this.canAttackSpeed = true;
         this.attackSpeed = type == 'archer' ? 96 : 48;
         this.attackSpeedDuration = 5000;
-        this.attackSpeedCooldown = 7000;
+        this.attackSpeedCooldown = 14000;
 
         this.isGoliath = false;
         this.canGoliath = true;
         this.goliath = 2.7;
         this.goliathDuration = 5000;
-        this.goliathCooldown = 15000;
+        this.goliathCooldown = 30000;
 
         this.isBuilding = false;
         this.canBuild = false;
@@ -523,9 +523,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.setPosition(this.spawnPoint.x, this.spawnPoint.y);
         }
         if (this.lives <= 0) {
-            console.log("Game Over");
-            this.scene.main_sound.stop()
-            this.scene.scene.restart();
+            this.scene.scene.pause();
+            this.scene.scene.launch('OverlayScene', { from: 'PlayerScene', open: "gameOver" });
+            // this.scene.main_sound.stop()
+            // this.scene.scene.restart();
         }
     }
 

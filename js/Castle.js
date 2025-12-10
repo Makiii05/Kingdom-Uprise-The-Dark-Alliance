@@ -150,8 +150,10 @@ export default class Castle extends Phaser.Physics.Matter.Sprite {
         this.updateHealthBar();
 
         if (this.hp <= 0) {
-            this.scene.main_sound.stop()
-            this.scene.scene.restart();
+            this.scene.scene.pause();
+            this.scene.scene.launch('OverlayScene', { from: 'CastleScene', open: "gameOver" });
+            // this.scene.main_sound.stop()
+            // this.scene.scene.restart();
         }
     }
 }
